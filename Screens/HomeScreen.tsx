@@ -29,6 +29,32 @@ export default function HomeScreen({ navigation }: any) {
         Easily manage tonight’s menu, add new dishes, edit existing ones, or organise by course.
       </Text>
 
+      {menuItems.length > 0 && (
+        <View style={styles.menuList}>
+          <Text style={styles.menuTitle}>Tonight's Menu</Text>
+
+          {["Starter", "Main", "Dessert"].map((courseType) => {
+            const items = menuItems
+              .filter((item) => item.course === courseType)
+              .reverse();
+            if (items.length === 0) return null;
+
+            return (
+              <View key={courseType} style={styles.courseSection}>
+                <Text style={styles.courseTitle}>{courseType}</Text>
+                {items.map((item, index) => (
+                  <View key={index} style={styles.menuItem}>
+                    <Text style={styles.itemName}>{item.name}</Text>
+                    <Text style={styles.itemDesc}>{item.desc}</Text>
+                    <Text style={styles.itemPrice}>R{item.price}</Text>
+                  </View>
+                ))}
+              </View>
+            );
+          })}
+        </View>
+      )}
+
       <Image
         source={require("../images/hero.png")}
         style={styles.hero}
@@ -48,7 +74,7 @@ export default function HomeScreen({ navigation }: any) {
           style={styles.iconButton}
           onPress={() =>
             navigation.navigate("AddItem", {
-              addItem: (newItem: any) => setMenuItems([...menuItems, newItem]),
+              addItem: (newItem: any) => setMenuItems([newItem, ...menuItems]),
             })
           }
         >
@@ -59,30 +85,6 @@ export default function HomeScreen({ navigation }: any) {
           <Text style={styles.iconLabel}>Add Item to Menu</Text>
         </TouchableOpacity>
       </View>
-
-      {menuItems.length > 0 && (
-        <View style={styles.menuList}>
-          <Text style={styles.menuTitle}>Tonight's Menu</Text>
-
-          {["Starter", "Main", "Dessert"].map((courseType) => {
-            const items = menuItems.filter((item) => item.course === courseType);
-            if (items.length === 0) return null;
-
-            return (
-              <View key={courseType} style={styles.courseSection}>
-                <Text style={styles.courseTitle}>{courseType}</Text>
-                {items.map((item, index) => (
-                  <View key={index} style={styles.menuItem}>
-                    <Text style={styles.itemName}>{item.name}</Text>
-                    <Text style={styles.itemDesc}>{item.desc}</Text>
-                    <Text style={styles.itemPrice}>R{item.price}</Text>
-                  </View>
-                ))}
-              </View>
-            );
-          })}
-        </View>
-      )}
     </ScrollView>
   );
 }
@@ -155,7 +157,7 @@ const styles = StyleSheet.create({
   },
   menuList: {
     width: "100%",
-    marginTop: 20,
+    marginBottom: 20,
   },
   menuTitle: {
     fontSize: 18,
