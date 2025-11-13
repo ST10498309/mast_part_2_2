@@ -1,19 +1,23 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 
+// The WelcomeScreen component 
 export default function WelcomeScreen({ navigation }: any) {
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* The logo image at the top */}
       <Image
         source={require("../images/christo.png")}
         style={styles.logo}
         resizeMode="contain"
       />
 
+      {/* Slogan */}
       <Text style={styles.slogan}>
         “Personalised Flavours.{"\n"}Exceptional Moments.”
       </Text>
 
+      {/* Next button to navigate to the Home screen */}
       <TouchableOpacity
         style={styles.button}
         onPress={() => navigation.navigate("Home")}
@@ -25,6 +29,7 @@ export default function WelcomeScreen({ navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  // Principal layout and element styles for the WelcomeScreen
   container: {
     flexGrow: 1,
     backgroundColor: "#5C0A0A",
