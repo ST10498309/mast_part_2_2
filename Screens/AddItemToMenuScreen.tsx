@@ -1,29 +1,33 @@
 import React, { useState } from "react";
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  ScrollView, 
-  StyleSheet, 
-  Alert 
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  Alert
 } from "react-native";
 import { Picker } from '@react-native-picker/picker';
 
+//Add a new menu item on the screen
 export default function AddMenuItemScreen({ route, navigation }: any) {
-  const { addItem } = route.params;
+  const { addItem } = route.params; // The HomeScreen function was used to add an item.
 
+  // State of the form fields
   const [dishName, setDishName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [course, setCourse] = useState("Starter"); 
+  const [course, setCourse] = useState("Starter");
 
+  // The feature that manages the saving of a new menu item
   const handleSave = () => {
     if (!dishName || !description || !price) {
-      Alert.alert("Error", "Please fill in all fields!");
+      Alert.alert("Error", "Please fill in all fields!"); //If any fields are empty, display an error.
       return;
     }
 
+    // Use the passed function to add the new item.
     addItem({
       name: dishName,
       desc: description,
@@ -31,17 +35,22 @@ export default function AddMenuItemScreen({ route, navigation }: any) {
       course: course,
     });
 
+    // Reset the form's fields
     setDishName("");
     setDescription("");
     setPrice("");
     setCourse("Starter");
+
+    // Return to the previous screen
     navigation.goBack();
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Title of the Screen */}
       <Text style={styles.title}>Add a New Menu Item</Text>
 
+      {/* Input for dish name */}
       <TextInput
         style={styles.input}
         placeholder="Dish Name"
@@ -49,6 +58,8 @@ export default function AddMenuItemScreen({ route, navigation }: any) {
         value={dishName}
         onChangeText={setDishName}
       />
+
+      {/* Input for dish description */}
       <TextInput
         style={styles.input}
         placeholder="Description"
@@ -56,6 +67,8 @@ export default function AddMenuItemScreen({ route, navigation }: any) {
         value={description}
         onChangeText={setDescription}
       />
+
+      {/* Input for dish price */}
       <TextInput
         style={styles.input}
         placeholder="Price"
@@ -65,6 +78,7 @@ export default function AddMenuItemScreen({ route, navigation }: any) {
         onChangeText={setPrice}
       />
 
+      {/* Dropdown for selecting course type */}
       <View style={styles.pickerContainer}>
         <Picker
           selectedValue={course}
@@ -78,12 +92,14 @@ export default function AddMenuItemScreen({ route, navigation }: any) {
         </Picker>
       </View>
 
+      {/* Save button */}
       <TouchableOpacity style={styles.button} onPress={handleSave}>
         <Text style={styles.buttonText}>Save Item</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity 
-        style={[styles.button, styles.backButton]} 
+      {/* Back button */}
+      <TouchableOpacity
+        style={[styles.button, styles.backButton]}
         onPress={() => navigation.goBack()}
       >
         <Text style={styles.backButtonText}>Back to Home</Text>
@@ -93,6 +109,7 @@ export default function AddMenuItemScreen({ route, navigation }: any) {
 }
 
 const styles = StyleSheet.create({
+  // Main styles for AddMenuItemScreen layout and elements
   container: {
     flexGrow: 1,
     backgroundColor: "#5C0A0A",
