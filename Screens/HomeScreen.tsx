@@ -1,44 +1,54 @@
 import React, { useState } from "react";
-import { 
-  View, 
-  Text, 
-  Image, 
-  TouchableOpacity, 
-  ScrollView, 
-  StyleSheet 
-} from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, Alert } from "react-native";
 
 export default function HomeScreen({ navigation }: any) {
   const [menuItems, setMenuItems] = useState<
     Array<{ name: string; desc: string; price: string; course: string }>
   >([]);
 
+  const calculateAveragePrice = () => {
+    if (menuItems.length === 0) return 0;
+    const total = menuItems.reduce((sum, item) => sum + Number(item.price), 0);
+    return (total / menuItems.length).toFixed(2);
+  };
+
+  const handleDelete = (index: number) => {
+    Alert.alert(
+      "Delete item",
+      `Are you sure you want to delete "${menuItems[index].name}"?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", style: "destructive", onPress: () => {
+          const updated = [...menuItems];
+          updated.splice(index, 1);
+          setMenuItems(updated);
+        } }
+      ]
+    );
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Image
-          source={require("../images/christo.png")}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+        <Image source={require("../images/christo.png")} style={styles.logo} resizeMode="contain" />
         <Text style={styles.title}>Welcome to Chef’s Christoffel’s Kitchen</Text>
+        <Text style={styles.subtitle}>
+          Easily manage tonight’s menu, add new dishes, edit existing ones, or organise by course.
+        </Text>
         <Text style={styles.countText}>Items Added: {menuItems.length}</Text>
+        {menuItems.length > 0 && (
+          <Text style={styles.averagePrice}>Average Price: R{calculateAveragePrice()}</Text>
+        )}
       </View>
-
-      <Text style={styles.subtitle}>
-        Easily manage tonight’s menu, add new dishes, edit existing ones, or organise by course.
-      </Text>
 
       {menuItems.length > 0 && (
         <View style={styles.menuList}>
           <Text style={styles.menuTitle}>Tonight's Menu</Text>
-
           {["Starter", "Main", "Dessert"].map((courseType) => {
             const items = menuItems
               .filter((item) => item.course === courseType)
               .reverse();
             if (items.length === 0) return null;
-
             return (
               <View key={courseType} style={styles.courseSection}>
                 <Text style={styles.courseTitle}>{courseType}</Text>
@@ -47,6 +57,12 @@ export default function HomeScreen({ navigation }: any) {
                     <Text style={styles.itemName}>{item.name}</Text>
                     <Text style={styles.itemDesc}>{item.desc}</Text>
                     <Text style={styles.itemPrice}>R{item.price}</Text>
+                    <TouchableOpacity
+                      style={styles.deleteBtn}
+                      onPress={() => handleDelete(index)}
+                    >
+                      <Text style={styles.deleteText}>Delete</Text>
+                    </TouchableOpacity>
                   </View>
                 ))}
               </View>
@@ -55,18 +71,11 @@ export default function HomeScreen({ navigation }: any) {
         </View>
       )}
 
-      <Image
-        source={require("../images/hero.png")}
-        style={styles.hero}
-        resizeMode="cover"
-      />
+      <Image source={require("../images/hero.png")} style={styles.hero} resizeMode="cover" />
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity style={styles.iconButton}>
-          <Image
-            source={require("../images/home.png")}
-            style={styles.icon}
-          />
+          <Image source={require("../images/home.png")} style={styles.icon} />
           <Text style={styles.iconLabel}>Home</Text>
         </TouchableOpacity>
 
@@ -78,11 +87,16 @@ export default function HomeScreen({ navigation }: any) {
             })
           }
         >
-          <Image
-            source={require("../images/additem.png")}
-            style={styles.icon}
-          />
-          <Text style={styles.iconLabel}>Add Item to Menu</Text>
+          <Image source={require("../images/additem.png")} style={styles.icon} />
+          <Text style={styles.iconLabel}>Add Item</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.iconButton}
+          onPress={() => navigation.navigate("Filter", { menuItems })}
+        >
+          <Image source={require("../images/filter.jpeg")} style={styles.icon} />
+          <Text style={styles.iconLabel}>Filter</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -118,6 +132,12 @@ const styles = StyleSheet.create({
     color: "#FFD700",
     marginTop: 5,
   },
+  averagePrice: {
+    fontSize: 16,
+    color: "#FFD700",
+    fontWeight: "bold",
+    marginTop: 5,
+  },
   subtitle: {
     fontSize: 14,
     color: "#fff",
@@ -133,26 +153,29 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    width: "80%",
+    justifyContent: "space-between",
+    width: "90%",
     backgroundColor: "#400707",
     paddingVertical: 15,
+    paddingHorizontal: 20,
     borderRadius: 50,
     marginBottom: 30,
   },
   iconButton: {
     alignItems: "center",
-    marginHorizontal: 10,
+    justifyContent: "center",
+    flex: 1,
   },
   icon: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
+    resizeMode: "contain",
+    marginBottom: 5,
   },
   iconLabel: {
     color: "#FFD700",
     fontSize: 14,
     fontWeight: "bold",
-    marginTop: 5,
     textAlign: "center",
   },
   menuList: {
@@ -195,5 +218,17 @@ const styles = StyleSheet.create({
     color: "#FFD700",
     fontWeight: "bold",
     fontSize: 14,
+  },
+  deleteBtn: {
+    marginTop: 8,
+    backgroundColor: "#FFD700",
+    paddingVertical: 4,
+    paddingHorizontal: 10,
+    borderRadius: 6,
+    alignSelf: "flex-start",
+  },
+  deleteText: {
+    color: "#5C0A0A",
+    fontWeight: "bold",
   },
 });

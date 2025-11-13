@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import WelcomeScreen from "./Screens/WelcomeScreen";
 import HomeScreen from "./Screens/HomeScreen";
 import AddMenuItemScreen from "./Screens/AddItemToMenuScreen";
+import FilterMenuScreen from './Screens/FilterScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,6 +27,12 @@ export default function App() {
           name="AddItem" 
           component={AddMenuItemScreen} 
           options={{ title: "Add Menu Item" }} 
+        />
+
+        <Stack.Screen 
+          name="Filter" 
+          component={FilterMenuScreen} 
+          options={{ title: "Filter Menu" }} 
         />
       </Stack.Navigator>
     </NavigationContainer>
