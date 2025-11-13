@@ -22,14 +22,14 @@ export default function HomeScreen({ navigation }: any) {
       `Are you sure you want to delete "${menuItems[index].name}"?`,
       [
         { text: "Cancel", style: "cancel" },
-        { 
-          text: "Delete", 
-          style: "destructive", 
+        {
+          text: "Delete",
+          style: "destructive",
           onPress: () => {
             const updated = [...menuItems]; // Copy the array of menuItems
             updated.splice(index, 1); //Take the item out of the specified index.
             setMenuItems(updated); //Update the state
-          } 
+          }
         }
       ]
     );
