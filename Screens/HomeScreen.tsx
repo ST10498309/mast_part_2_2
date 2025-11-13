@@ -3,19 +3,25 @@ import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, Alert } fr
 
 // HomeScreen element
 export default function HomeScreen({ navigation }: any) {
-  // Menu items are stored in a state (array of objects with name, description, price, and course).
   const [menuItems, setMenuItems] = useState<
     Array<{ name: string; desc: string; price: string; course: string }>
   >([]);
 
-  //A function to determine the average cost of every item on the menu
-  const calculateAveragePrice = () => {
-    if (menuItems.length === 0) return 0; // Avoid division by zero
-    const total = menuItems.reduce((sum, item) => sum + Number(item.price), 0); // Sum prices
-    return (total / menuItems.length).toFixed(2); // Return average with 2 decimals
+  // Function to calculate average price for a specific course
+  const calculateAveragePriceByCourse = (course: string) => {
+    const items = menuItems.filter(item => item.course === course);
+    if (items.length === 0) return 0;
+    const total = items.reduce((sum, item) => sum + Number(item.price), 0);
+    return (total / items.length).toFixed(2);
   };
 
-  // The feature that manages removing an item from the menu
+  // Function to calculate overall average
+  const calculateOverallAverage = () => {
+    if (menuItems.length === 0) return 0;
+    const total = menuItems.reduce((sum, item) => sum + Number(item.price), 0);
+    return (total / menuItems.length).toFixed(2);
+  };
+
   const handleDelete = (index: number) => {
     Alert.alert(
       "Delete item",
@@ -26,9 +32,9 @@ export default function HomeScreen({ navigation }: any) {
           text: "Delete",
           style: "destructive",
           onPress: () => {
-            const updated = [...menuItems]; // Copy the array of menuItems
-            updated.splice(index, 1); //Take the item out of the specified index.
-            setMenuItems(updated); //Update the state
+            const updated = [...menuItems];
+            updated.splice(index, 1);
+            setMenuItems(updated);
           }
         }
       ]
@@ -37,7 +43,6 @@ export default function HomeScreen({ navigation }: any) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* The header portion contains the menu information, title, subtitle, and logo. */}
       <View style={styles.header}>
         <Image source={require("../images/christo.png")} style={styles.logo} resizeMode="contain" />
         <Text style={styles.title}>Welcome to Chef’s Christoffel’s Kitchen</Text>
@@ -45,20 +50,24 @@ export default function HomeScreen({ navigation }: any) {
           Easily manage tonight’s menu, add new dishes, edit existing ones, or organise by course.
         </Text>
         <Text style={styles.countText}>Items Added: {menuItems.length}</Text>
+
         {menuItems.length > 0 && (
-          <Text style={styles.averagePrice}>Average Price: R{calculateAveragePrice()}</Text>
+          <View style={{ marginTop: 5, alignSelf: "flex-start" }}>
+            <Text style={styles.averagePrice}>Starters Average: R{calculateAveragePriceByCourse("Starter")}</Text>
+            <Text style={styles.averagePrice}>Mains Average: R{calculateAveragePriceByCourse("Main")}</Text>
+            <Text style={styles.averagePrice}>Desserts Average: R{calculateAveragePriceByCourse("Dessert")}</Text>
+            <Text style={styles.averagePrice}>Overall Average: R{calculateOverallAverage()}</Text>
+          </View>
         )}
       </View>
 
-      {/*List of menu items organized by kind of course */}
       {menuItems.length > 0 && (
         <View style={styles.menuList}>
           <Text style={styles.menuTitle}>Tonight's Menu</Text>
           {["Starter", "Main", "Dessert"].map((courseType) => {
-            // Items can be filtered by course.
             const items = menuItems
               .filter((item) => item.course === courseType)
-              .reverse(); // Display the newest things first.
+              .reverse();
             if (items.length === 0) return null;
 
             return (
@@ -69,7 +78,6 @@ export default function HomeScreen({ navigation }: any) {
                     <Text style={styles.itemName}>{item.name}</Text>
                     <Text style={styles.itemDesc}>{item.desc}</Text>
                     <Text style={styles.itemPrice}>R{item.price}</Text>
-                    {/* Delete button */}
                     <TouchableOpacity
                       style={styles.deleteBtn}
                       onPress={() => handleDelete(index)}
@@ -84,18 +92,14 @@ export default function HomeScreen({ navigation }: any) {
         </View>
       )}
 
-      {/* Hero image */}
       <Image source={require("../images/hero.png")} style={styles.hero} resizeMode="cover" />
 
-      {/* Bottom navigation buttons */}
       <View style={styles.buttonContainer}>
-        {/* Home button */}
         <TouchableOpacity style={styles.iconButton}>
           <Image source={require("../images/home.png")} style={styles.icon} />
           <Text style={styles.iconLabel}>Home</Text>
         </TouchableOpacity>
 
-        {/* Add item button */}
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() =>
@@ -108,7 +112,6 @@ export default function HomeScreen({ navigation }: any) {
           <Text style={styles.iconLabel}>Add Item</Text>
         </TouchableOpacity>
 
-        {/* Filter button */}
         <TouchableOpacity
           style={styles.iconButton}
           onPress={() => navigation.navigate("Filter", { menuItems })}
@@ -121,7 +124,6 @@ export default function HomeScreen({ navigation }: any) {
   );
 }
 
-// The component's styles
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
@@ -153,7 +155,7 @@ const styles = StyleSheet.create({
   },
   averagePrice: {
     fontSize: 16,
-    color: "#FFD700",
+    color: "#FFFFFF", // Changed to white
     fontWeight: "bold",
     marginTop: 5,
   },
